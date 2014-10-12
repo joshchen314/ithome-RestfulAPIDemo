@@ -7,6 +7,18 @@ var app = express();
 var db_uri = "mongodb://192.168.33.10:27017/TODOs";
 mongoose.connect(db_uri);
 
+// Set Header Check
+app.use( function(req, res, next) {
+    var api_key = req.get('API-Key');
+
+    if (api_key != "55665566") {
+        res.status(401).send({ error: "Unauthorized"});
+    }
+    else {
+        next();
+    }
+});
+
 // Set routers
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -16,6 +28,18 @@ app.use( bodyParser.urlencoded({ extended: true }) );
 
 app.use('/', index);
 app.use('/user', users);
+
+// Set Header Check
+app.use( function(req, res, next) {
+    var api_key = req.get('API-Key');
+
+    if (api_key != "55665566") {
+        res.status(401).send({ error: "Unauthorized"});
+    }
+    else {
+        next();
+    }
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
