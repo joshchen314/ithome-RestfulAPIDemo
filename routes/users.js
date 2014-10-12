@@ -97,7 +97,23 @@ router.put('/:user_id/todos/:todo_id', function(req, res) {
 
 // Delete a todo task
 router.delete('/:user_id/todos/:todo_id', function(req, res) {
-    res.status(200).json( {success: "DELETE"} );
+    var user_id = req.params.user_id;
+    var todo_id = req.params.todo_id;
+
+    TODO.remove(
+        { _id: todo_id, user_id: user_id },
+        function (err) {
+            if (err) {
+                res.status(400).json(
+                    { error: "delete data error"}
+                );
+            } else {
+                res.status(201).json(
+                    { success: "true" }
+                );
+            }
+        }
+    );
 });
 
 module.exports = router;
