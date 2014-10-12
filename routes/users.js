@@ -6,7 +6,22 @@ var router = express.Router();
 
 // Get todo list
 router.get('/:user_id/todos', function(req, res) {
-    res.status(200).json( {success: "GET lists"} );
+    var user_id = req.params.user_id;
+
+    TODO.find(
+        {user_id: user_id},
+        function (err, results) {
+            if (err) {
+                res.status(400).json(
+                    { error: "can not find data" }
+                );
+            } else {
+                res.status(200).json(
+                    results
+                );
+            }
+        }
+    );
 });
 
 // Create a todo task
@@ -36,7 +51,23 @@ router.post('/:user_id/todos', function(req, res) {
 
 // Get a todo task
 router.get('/:user_id/todos/:todo_id', function(req, res) {
-    res.status(200).json( {success: "GET 1 task", user: req.params.user_id, todo_id: req.params.todo_id} );
+    var user_id = req.params.user_id;
+    var todo_id = req.params.todo_id;
+
+    TODO.find(
+        { _id: todo_id, user_id: user_id},
+        function (err, results) {
+            if (err) {
+                res.status(400).json(
+                    { error: "can not find data" }
+                );
+            } else {
+                res.status(200).json(
+                    results[0]
+                );
+            }
+        }
+    );
 });
 
 // Update a todo task
