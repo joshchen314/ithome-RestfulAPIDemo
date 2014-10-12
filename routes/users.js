@@ -72,7 +72,27 @@ router.get('/:user_id/todos/:todo_id', function(req, res) {
 
 // Update a todo task
 router.put('/:user_id/todos/:todo_id', function(req, res) {
-    res.status(200).json( {success: "PUT"} );
+    var user_id = req.params.user_id;
+    var todo_id = req.params.todo_id;
+    var data = req.body;
+
+    TODO.update(
+        { _id: todo_id, user_id: user_id },
+        { $set: { content: data.content } },
+        function (err, num, raw, results) {
+            if (err) {
+                res.status(400).json(
+                    { error: "update data error" }
+                );
+            } else {
+                TODO.find({ _id: todo_id, user_id: user_id }, function (err, results) {
+                    res.status(201).json(
+                        results[0]
+                    );
+                });
+            }
+        }
+    );
 });
 
 // Delete a todo task
