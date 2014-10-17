@@ -1,11 +1,31 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var log4js = require('log4js');
 var app = express();
+var config = require('./config/config');
 
 // Set DB
-var db_uri = "mongodb://192.168.33.10:27017/TODOs";
-mongoose.connect(db_uri);
+mongoose.connect(config.db.development);
+
+log4js.configure({
+    appenders: [
+        { type: 'console' }, //控制台輸出
+        {
+            type: 'file', //文件輸出
+            filename: 'logs/access.log',
+            maxLogSize: 20000000, // 20 MB
+            backups: 10,
+            category: 'normal'
+        }
+    ],
+    replaceConsole: true
+});
+
+var logger = log4js.getLogger('normal');
+logger.setLevel('INFO');
+
+app.use(log4js.connectLogger(logger, {level: 'auto', format:':method :url'}));
 
 // Set Header Check
 app.use( function(req, res, next) {
